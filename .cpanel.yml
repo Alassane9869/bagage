@@ -1,0 +1,15 @@
+---
+deployment:
+  tasks:
+    - /bin/rsync -a --chmod=D755,F644 --exclude='.git' --exclude='node_modules' --exclude='.env' /home/sc2vuxe8870/repositories/bagage/ /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/
+    - chmod 755 /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/ /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/public/
+    - find /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/ -name ".htaccess" -exec chmod 644 {} +
+    - chmod -R 777 /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/storage
+    - chmod -R 777 /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/bootstrap/cache
+    - cp -f /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/.env.production /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/.env || true
+    - /opt/cpanel/composer/bin/composer --working-dir=/home/sc2vuxe8870/diarra-bagage.diawando-tech.com/ install --no-dev --optimize-autoloader || composer --working-dir=/home/sc2vuxe8870/diarra-bagage.diawando-tech.com/ install --no-dev --optimize-autoloader || true
+    - /usr/local/bin/php /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/artisan key:generate --force || true
+    - /usr/local/bin/php /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/artisan migrate --force --seed
+    - /usr/local/bin/php /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/artisan storage:link || true
+    - /usr/local/bin/php /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/artisan optimize:clear
+    - /usr/local/bin/php /home/sc2vuxe8870/diarra-bagage.diawando-tech.com/artisan optimize
