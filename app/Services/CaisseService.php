@@ -16,10 +16,20 @@ class CaisseService
     {
         $today = now()->toDateString();
 
-        $caisse = Caisse::firstOrCreate(
-            ['user_id' => $user->id, 'date_caisse' => $today],
-            ['total_bagages' => 0, 'recettes' => 0, 'remises' => 0, 'net' => 0]
-        );
+        $caisse = Caisse::where('user_id', $user->id)
+            ->whereDate('date_caisse', $today)
+            ->first();
+
+        if (!$caisse) {
+            $caisse = Caisse::create([
+                'user_id'       => $user->id,
+                'date_caisse'   => $today,
+                'total_bagages' => 0,
+                'recettes'      => 0,
+                'remises'       => 0,
+                'net'           => 0,
+            ]);
+        }
 
         $caisse->increment('total_bagages');
         $caisse->increment('recettes', $montant);
@@ -63,15 +73,17 @@ class CaisseService
 
         // Bagages avec voyage lié — on groupe sur programme + ville pour éviter
         // l'erreur MySQL 1055 "not in GROUP BY"
+        $concatProgramme = DB::getDriverName() === 'sqlite'
+            ? "(voyages.ville_depart || '-' || voyages.ville_arrivee)"
+            : "CONCAT(voyages.ville_depart, '-', voyages.ville_arrivee)";
+
         $avecVoyage = Bagage::from('bagages')
             ->where('bagages.user_id', $user->id)
             ->whereDate('bagages.date_enregistrement', $date)
             ->whereNotNull('bagages.voyage_id')
             ->join('voyages', 'bagages.voyage_id', '=', 'voyages.id')
             ->select(
-                DB::raw('COALESCE(voyages.programme,
-                          CONCAT(voyages.ville_depart, "-", voyages.ville_arrivee))
-                          AS programme'),
+                DB::raw("COALESCE(voyages.programme, {$concatProgramme}) AS programme"),
                 'voyages.ville_depart',
                 'voyages.ville_arrivee',
                 DB::raw('COUNT(*)                              AS nb_bagages'),
@@ -143,13 +155,16 @@ class CaisseService
             ')
             ->first();
 
+        $concatNom = DB::getDriverName() === 'sqlite'
+            ? "(COALESCE(users.prenom,'') || ' ' || COALESCE(users.nom,''))"
+            : "CONCAT(COALESCE(users.prenom,''), ' ', COALESCE(users.nom,''))";
+
         $parAgent = Bagage::from('bagages')
             ->whereDate('bagages.date_enregistrement', $date)
             ->join('users', 'bagages.user_id', '=', 'users.id')
             ->select(
                 'users.id',
-                DB::raw("CONCAT(COALESCE(users.prenom,''), ' ', COALESCE(users.nom,''))
-                         AS nom_complet"),
+                DB::raw("{$concatNom} AS nom_complet"),
                 'users.agence',
                 DB::raw('COUNT(*)                               AS nb_bagages'),
                 DB::raw('SUM(bagages.montant)                  AS recettes'),

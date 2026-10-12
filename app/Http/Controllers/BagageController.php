@@ -243,7 +243,11 @@ class BagageController extends Controller
     /** Recherche AJAX clients connus */
     public function searchClients(Request $request): JsonResponse
     {
-        $q = $request->get('q', '');
+        $q = trim($request->get('q', ''));
+        if (strlen($q) < 2) {
+            return response()->json([]);
+        }
+
         $clients = Client::where('nom', 'like', "%{$q}%")
             ->orWhere('prenom', 'like', "%{$q}%")
             ->orWhere('telephone', 'like', "%{$q}%")

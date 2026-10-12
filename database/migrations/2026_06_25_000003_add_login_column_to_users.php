@@ -15,13 +15,23 @@ return new class extends Migration
         });
 
         // Pré-remplir login avec la partie avant @ de l'email existant
-        DB::statement("
-            UPDATE users
-            SET login = CASE
-                WHEN email LIKE '%@%' THEN SUBSTRING_INDEX(email, '@', 1)
-                ELSE email
-            END
-        ");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                UPDATE users
+                SET login = CASE
+                    WHEN email LIKE '%@%' THEN SUBSTRING_INDEX(email, '@', 1)
+                    ELSE email
+                END
+            ");
+        } else {
+            $users = DB::table('users')->get();
+            foreach ($users as $u) {
+                if ($u->email) {
+                    $parts = explode('@', $u->email);
+                    DB::table('users')->where('id', $u->id)->update(['login' => $parts[0]]);
+                }
+            }
+        }
 
         // Rendre le login NOT NULL après remplissage
         Schema::table('users', function (Blueprint $table) {

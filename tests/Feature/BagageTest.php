@@ -31,7 +31,10 @@ class BagageTest extends TestCase
             'telephone'     => '+223 70 00 00 00',
             'nombre_colis'  => 2,
             'nature'        => 'Valise',
-            'poids'         => 15.5,
+            'colis'         => [
+                ['nature' => 'Valise', 'valeur' => '10000', 'prix' => 2500],
+                ['nature' => 'Carton', 'valeur' => '10000', 'prix' => 2500],
+            ],
             'montant'       => 5000,
             'remise'        => 500,
         ];

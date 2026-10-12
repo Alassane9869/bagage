@@ -30,11 +30,15 @@ class DashboardController extends Controller
             [$debut . ' 00:00:00', $fin . ' 23:59:59'])->sum('montant');
 
         // ── Évolution mensuelle ────────────────────────────────
+        $isSqlite = DB::getDriverName() === 'sqlite';
+        $moisExpr = $isSqlite ? "strftime('%Y-%m', date_enregistrement)" : "DATE_FORMAT(date_enregistrement, '%Y-%m')";
+        $moisLabelExpr = $isSqlite ? "strftime('%m/%Y', date_enregistrement)" : "DATE_FORMAT(date_enregistrement, '%b %Y')";
+
         $evolutionRaw = Bagage::whereBetween('date_enregistrement',
             [$debut . ' 00:00:00', $fin . ' 23:59:59'])
             ->select(
-                DB::raw("DATE_FORMAT(date_enregistrement, '%Y-%m') as mois"),
-                DB::raw("DATE_FORMAT(date_enregistrement, '%b %Y') as mois_label"),
+                DB::raw("{$moisExpr} as mois"),
+                DB::raw("{$moisLabelExpr} as mois_label"),
                 DB::raw('COUNT(*) as total'),
                 DB::raw('SUM(CASE WHEN statut = "embarque" THEN 1 ELSE 0 END) as embarques'),
                 DB::raw('SUM(montant) as recettes')

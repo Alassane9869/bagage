@@ -14,20 +14,24 @@ return new class extends Migration
             WHERE statut IN ('en_transit', 'arrive', 'retire', 'perdu', 'endommage')
         ");
 
-        // Modifier l'ENUM pour ne garder que les 2 statuts
-        DB::statement("
-            ALTER TABLE bagages
-            MODIFY COLUMN statut ENUM('enregistre','embarque') NOT NULL DEFAULT 'enregistre'
-        ");
+        // Modifier l'ENUM pour ne garder que les 2 statuts (MySQL uniquement)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                ALTER TABLE bagages
+                MODIFY COLUMN statut ENUM('enregistre','embarque') NOT NULL DEFAULT 'enregistre'
+            ");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("
-            ALTER TABLE bagages
-            MODIFY COLUMN statut ENUM(
-                'enregistre','embarque','en_transit','arrive','retire','perdu','endommage'
-            ) NOT NULL DEFAULT 'enregistre'
-        ");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                ALTER TABLE bagages
+                MODIFY COLUMN statut ENUM(
+                    'enregistre','embarque','en_transit','arrive','retire','perdu','endommage'
+                ) NOT NULL DEFAULT 'enregistre'
+            ");
+        }
     }
 };

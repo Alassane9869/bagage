@@ -27,8 +27,10 @@ class LoginController extends Controller
         $login    = trim($request->email);
         $password = $request->password;
 
-        // Chercher l'utilisateur par login (champ libre)
-        $user = \App\Models\User::where('login', $login)->first();
+        // Chercher l'utilisateur par login (champ libre) OU par email
+        $user = \App\Models\User::where('login', $login)
+            ->orWhere('email', $login)
+            ->first();
 
         if (!$user) {
             return back()->withErrors([
