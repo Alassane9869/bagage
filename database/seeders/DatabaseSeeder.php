@@ -58,12 +58,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // ── Société ───────────────────────────────────────────────
-        Societe::firstOrCreate(['id' => 1], [
+        Societe::updateOrCreate(['id' => 1], [
             'raison_sociale'    => 'DIARRA TRANSPORT',
             'telephone'         => '(223) 20802142',
             'email'             => 'contact@diarratransport.ml',
             'adresse'           => 'Près de la maternité Sogoniko – Bamako, Mali',
             'guichet_principal' => '20802142',
+            'logo_path'         => 'logos/logo_societe_1782763691.png',
         ]);
 
         // ── Voyages ───────────────────────────────────────────────

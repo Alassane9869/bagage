@@ -1,3 +1,16 @@
+@php
+  $societe = \App\Models\Societe::first();
+  $logoRelPath = ($societe && $societe->logo_path) ? $societe->logo_path : 'logos/logo_societe_1782763691.png';
+  $diskPath = storage_path('app/public/' . $logoRelPath);
+  if (!file_exists($diskPath)) {
+      $diskPath = storage_path('app/public/logos/logo_societe_1782763691.png');
+  }
+  $logoBase64 = '';
+  if (file_exists($diskPath)) {
+      $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($diskPath));
+  }
+  $logoWeb = asset('storage/' . $logoRelPath);
+@endphp
 <script>
 /* ══════════════════════════════════════════════════════════════
    MODAL REÇU – Diarra Transport
@@ -5,6 +18,14 @@
                buildRecu · buildEtiquettes
                printRecu · printEtiq · printTout
    ══════════════════════════════════════════════════════════════ */
+
+// ── VRAI LOGO OFFICIEL DIARRA TRANSPORT (Image HD originale) ──
+const VRAI_LOGO_SRC = @json($logoBase64 ?: $logoWeb);
+
+function logoSvg(size) {
+  size = size || 42;
+  return `<img src="${VRAI_LOGO_SRC}" width="${size}" height="${size}" style="border-radius:50%;object-fit:cover;vertical-align:middle;display:inline-block;box-shadow:0 1px 4px rgba(0,0,0,0.2);" alt="Logo Diarra Transport">`;
+}
 
 // ── Ouvre la modal ────────────────────────────────────────────
 function openModalRecu(bagage, qrSvg) {
@@ -31,48 +52,6 @@ function closeModalRecu() {
 document.getElementById('modalPrint').addEventListener('click', function(e) {
   if (e.target === this) closeModalRecu();
 });
-
-// ── SVG Logo Diarra Transport (vrai logo – tricolore Mali + cheval blanc) ──
-function logoSvg(size) {
-  size = size || 40;
-  const id = 'lc' + size + Math.random().toString(36).slice(2,6);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 100 100">
-    <defs><clipPath id="${id}"><circle cx="50" cy="50" r="46"/></clipPath></defs>
-    <!-- Anneau vert foncé -->
-    <circle cx="50" cy="50" r="49" fill="#0d5c2e"/>
-    <circle cx="50" cy="50" r="46" fill="#fff"/>
-    <!-- Bandes tricolores Mali -->
-    <rect x="4"  y="4" width="30" height="92" clip-path="url(#${id})" fill="#169B62"/>
-    <rect x="34" y="4" width="32" height="92" clip-path="url(#${id})" fill="#FCD116"/>
-    <rect x="66" y="4" width="30" height="92" clip-path="url(#${id})" fill="#CE1126"/>
-    <!-- Cheval blanc bondissant -->
-    <g clip-path="url(#${id})">
-      <ellipse cx="50" cy="56" rx="22" ry="14" fill="white" transform="rotate(-10,50,56)"/>
-      <ellipse cx="72" cy="40" rx="9"  ry="7"  fill="white" transform="rotate(-20,72,40)"/>
-      <polygon points="64,44 72,33 78,46 68,50" fill="white"/>
-      <ellipse cx="68" cy="34" rx="5"  ry="8"  fill="white" transform="rotate(-30,68,34)"/>
-      <polygon points="70,30 73,24 76,30"       fill="white"/>
-      <rect x="62" y="62" width="5" height="16" rx="2" fill="white" transform="rotate(20,64,62)"/>
-      <rect x="70" y="60" width="5" height="16" rx="2" fill="white" transform="rotate(35,72,60)"/>
-      <rect x="30" y="62" width="5" height="14" rx="2" fill="white" transform="rotate(-20,32,62)"/>
-      <rect x="38" y="64" width="5" height="14" rx="2" fill="white" transform="rotate(-10,40,64)"/>
-      <path d="M29,54 Q18,48 16,56 Q18,65 26,62" fill="white"/>
-      <circle cx="75" cy="38" r="1.5" fill="#169B62"/>
-    </g>
-    <!-- Texte arqué haut : DIARRA -->
-    <path id="at${id}" d="M 15,50 A 35,35 0 0,1 85,50" fill="none"/>
-    <text font-family="Arial Black,Arial,sans-serif" font-size="11" font-weight="900"
-          fill="white" stroke="#0d5c2e" stroke-width=".5" letter-spacing="2">
-      <textPath href="#at${id}" startOffset="12%">DIARRA</textPath>
-    </text>
-    <!-- Texte arqué bas : TRANSPORT -->
-    <path id="ab${id}" d="M 12,54 A 38,38 0 0,0 88,54" fill="none"/>
-    <text font-family="Arial Black,Arial,sans-serif" font-size="9" font-weight="900"
-          fill="white" stroke="#0d5c2e" stroke-width=".4" letter-spacing="1">
-      <textPath href="#ab${id}" startOffset="8%">TRANSPORT</textPath>
-    </text>
-  </svg>`;
-}
 
 // ── Helpers format de date fiables (évite les bugs 'Invalid Date') ──
 function formatFrenchDate(dateVal) {
