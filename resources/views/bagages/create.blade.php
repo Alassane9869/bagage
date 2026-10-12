@@ -8,7 +8,14 @@
 .fc-grid{display:grid;gap:14px;}
 .fc-cols-2{grid-template-columns:1fr 1fr;}
 .fc-cols-3{grid-template-columns:1fr 1fr 1fr;}
-@media(max-width:640px){.fc-cols-2,.fc-cols-3{grid-template-columns:1fr;}}
+@media(max-width:768px){
+  .fc{padding:16px 14px;margin-bottom:14px;}
+  .fc-cols-2,.fc-cols-3{grid-template-columns:1fr;}
+  .form-actions-bar{flex-direction:column;width:100%;}
+  .form-actions-bar button{width:100% !important;justify-content:center;}
+  .tarif-box{padding:14px;}
+  .tarif-box .tarif-value{font-size:1.6rem;}
+}
 .client-search-wrap{display:none;}
 .client-search-wrap.show{display:block;}
 .client-suggestions{
@@ -22,7 +29,7 @@
   display:flex;justify-content:space-between;align-items:center;
 }
 .client-suggestions .sug-item:hover{background:var(--dark2);}
-.btn-reset{background:var(--dark3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:10px 18px;font-size:.85rem;cursor:pointer;transition:.15s;}
+.btn-reset{background:var(--dark3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:10px 18px;font-size:.85rem;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;}
 .btn-reset:hover{border-color:var(--gold);color:var(--gold);}
 /* Spinner dans le bouton submit */
 .btn-gold .spinner{display:none;width:14px;height:14px;border:2px solid rgba(0,0,0,.3);border-top-color:#0e1621;border-radius:50%;animation:spin .6s linear infinite;margin-left:8px;vertical-align:middle;}
@@ -173,7 +180,7 @@
     <ul id="formErrorsList" style="color:#f87171;font-size:.8rem;padding-left:16px;margin:0;"></ul>
   </div>
 
-  <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;align-items:center;">
+  <div class="form-actions-bar" style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;align-items:center;">
     <button type="button" id="btnConfirmer" class="btn-gold" onclick="soumettreBagage()">
       <i class="bi bi-box-seam"></i> CONFIRMER COLIS
       <span class="spinner"></span>

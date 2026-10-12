@@ -24,10 +24,17 @@
   display:grid;grid-template-columns:1fr 1fr;gap:16px;
   padding:16px 20px;overflow-y:auto;flex:1;
 }
-@media(max-width:700px){.modal-print-body{grid-template-columns:1fr;}}
 .modal-print-footer{
   padding:14px 20px;border-top:1px solid var(--border);
   display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0;
+}
+@media(max-width:700px){
+  .modal-print-overlay{padding:8px;}
+  .modal-print-box{max-height:94vh;border-radius:12px;}
+  .modal-print-header{padding:12px 14px;}
+  .modal-print-body{grid-template-columns:1fr;padding:12px 14px;}
+  .modal-print-footer{padding:12px 14px;flex-direction:column;gap:8px;}
+  .modal-print-footer button{width:100% !important;min-height:44px;justify-content:center;margin-left:0 !important;}
 }
 
 /* ── Reçu (fond blanc) ────────────────── */

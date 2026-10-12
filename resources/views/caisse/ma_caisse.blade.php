@@ -49,7 +49,12 @@
 }
 /* ── Cards caisse ───────────────────────────── */
 .mc-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;}
-@media(max-width:720px){.mc-cards{grid-template-columns:1fr;}}
+@media(max-width:720px){
+  .mc-header{padding:16px 14px;gap:12px;}
+  .mc-header-left h1{font-size:1.25rem;}
+  .mc-btn-print{width:100%;justify-content:center;}
+  .mc-cards{grid-template-columns:1fr;}
+}
 .mc-card{
   background:var(--dark2);border:1px solid var(--border);
   border-radius:12px;padding:20px 22px;
@@ -211,7 +216,7 @@
       <div style="font-size:.8rem;margin-top:6px;">le {{ $dc->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</div>
     </div>
   @else
-  <div style="overflow-x:auto;">
+  <div class="table-responsive-dt">
     <table class="table-dt">
       <thead>
         <tr>

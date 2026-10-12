@@ -1,6 +1,36 @@
 @extends('layouts.app')
 @section('title','Bagages Enregistrés')
 
+@section('styles')
+<style>
+.bagages-filter-form {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center;
+}
+.bagages-filter-form .filter-input {
+  max-width: 280px; flex: 1;
+}
+.bagages-filter-form .filter-select {
+  max-width: 180px;
+}
+@media(max-width: 640px) {
+  .bagages-filter-form {
+    flex-direction: column; align-items: stretch; gap: 8px;
+  }
+  .bagages-filter-form .filter-input,
+  .bagages-filter-form .filter-select {
+    max-width: 100% !important; width: 100%;
+  }
+  .bagages-filter-form .filter-actions {
+    display: flex; gap: 8px; width: 100%;
+  }
+  .bagages-filter-form .filter-actions button,
+  .bagages-filter-form .filter-actions a {
+    flex: 1; justify-content: center;
+  }
+}
+</style>
+@endsection
+
 @section('content')
 <div class="page-header">
   <h1><i class="bi bi-clipboard-data"></i> Colis Enregistrés</h1>
@@ -9,21 +39,23 @@
 
 <div class="card-dt">
   {{-- Filtres --}}
-  <form method="GET" action="{{ route('bagages.index') }}" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
-    <input type="text" name="search" class="form-control" style="max-width:280px;"
+  <form method="GET" action="{{ route('bagages.index') }}" class="bagages-filter-form">
+    <input type="text" name="search" class="form-control filter-input"
            placeholder="Rechercher N° Bagage, billet, voyageur…" value="{{ request('search') }}">
-    <select name="statut" class="form-select" style="max-width:180px;" onchange="this.form.submit()">
+    <select name="statut" class="form-select filter-select" onchange="this.form.submit()">
       <option value="">Tous les Bagages</option>
       <option value="enregistre" {{ request('statut')==='enregistre' ? 'selected':'' }}>Enregistré</option>
       <option value="embarque"   {{ request('statut')==='embarque'   ? 'selected':'' }}>Embarqué</option>
     </select>
-    <button type="submit" class="btn-gold" style="padding:8px 16px;"><i class="bi bi-search"></i> Filtrer</button>
-    @if(request('search') || request('statut'))
-      <a href="{{ route('bagages.index') }}" class="btn-reset" style="padding:8px 14px;display:flex;align-items:center;"><i class="bi bi-x-lg"></i> Effacer</a>
-    @endif
+    <div class="filter-actions" style="display:flex;gap:8px;">
+      <button type="submit" class="btn-gold" style="padding:8px 16px;"><i class="bi bi-search"></i> Filtrer</button>
+      @if(request('search') || request('statut'))
+        <a href="{{ route('bagages.index') }}" class="btn-reset" style="padding:8px 14px;display:flex;align-items:center;"><i class="bi bi-x-lg"></i> Effacer</a>
+      @endif
+    </div>
   </form>
 
-  <div style="overflow-x:auto;">
+  <div class="table-responsive-dt">
     <table class="table-dt">
       <thead>
         <tr>

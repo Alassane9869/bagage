@@ -43,7 +43,7 @@
 
 <div class="card-dt">
   <div class="card-title">Par Programme</div>
-  <div style="overflow-x:auto;">
+  <div class="table-responsive-dt">
     <table class="table-dt">
       <thead>
         <tr><th>Programme</th><th>Nb Bagages</th><th>Recettes</th><th>Remises</th><th>Net</th></tr>

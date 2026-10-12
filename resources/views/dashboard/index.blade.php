@@ -21,16 +21,22 @@
 }
 .db-filters label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
 .db-date{
-  height:34px;padding:0 10px;border-radius:7px;font-size:.82rem;
+  height:36px;padding:0 10px;border-radius:7px;font-size:.82rem;
   border:1px solid var(--border);background:var(--dark3);color:var(--text);
   font-family:inherit;cursor:pointer;outline:none;color-scheme:dark;
 }
 .db-date:focus{border-color:var(--gold);}
 .btn-refresh{
-  height:34px;padding:0 16px;border-radius:7px;
+  height:36px;padding:0 16px;border-radius:7px;
   background:linear-gradient(135deg,var(--gold),var(--gold2));
   border:none;color:#0e1621;font-weight:700;font-size:.82rem;
   cursor:pointer;font-family:inherit;
+}
+@media(max-width:600px){
+  .db-filters{flex-direction:column;align-items:stretch;gap:12px;}
+  .db-filters > div{width:100%;}
+  .db-date{width:100%;}
+  .btn-refresh{width:100%;min-height:42px;}
 }
 
 /* ── Stat cards ─── */
@@ -38,32 +44,32 @@
 @media(max-width:900px){.db-stats{grid-template-columns:1fr 1fr;}}
 @media(max-width:560px){.db-stats{grid-template-columns:1fr;}}
 .db-stat-card{
-  background:#fff;border:1px solid #e0e0e0;border-radius:10px;
+  background:var(--dark2);border:1px solid var(--border);border-radius:12px;
   padding:18px 20px;position:relative;
 }
 .db-stat-card .refresh-icon{
   position:absolute;top:10px;right:12px;
-  font-size:.85rem;color:#aaa;cursor:pointer;
+  font-size:.85rem;color:var(--text2);cursor:pointer;
 }
-.db-stat-card .s-label{font-size:.75rem;color:#888;margin-bottom:6px;}
+.db-stat-card .s-label{font-size:.75rem;color:var(--text2);margin-bottom:6px;}
 .db-stat-card .s-value{
-  font-size:1.7rem;font-weight:700;color:#1a6bbf;
+  font-size:1.7rem;font-weight:700;color:var(--gold);
   font-family:'Space Mono',monospace;line-height:1.1;
 }
-.db-stat-card .s-value.green{color:#169B62;}
-.db-stat-card .s-value.orange{color:#e07b00;}
+.db-stat-card .s-value.green{color:#4ade80;}
+.db-stat-card .s-value.orange{color:#f59e0b;}
 
 /* ── Graphiques ─── */
 .db-charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
 @media(max-width:860px){.db-charts{grid-template-columns:1fr;}}
 .db-chart-card{
-  background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:16px 18px;
+  background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
 }
 .db-chart-title{
-  font-size:.85rem;font-weight:700;color:#1a2332;margin-bottom:14px;
+  font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:14px;
   display:flex;justify-content:space-between;align-items:center;
 }
-.db-chart-title .refresh-icon{font-size:.85rem;color:#aaa;cursor:pointer;}
+.db-chart-title .refresh-icon{font-size:.85rem;color:var(--text2);cursor:pointer;}
 
 /* ── Gestion des droits ─── */
 .droits-card{display:none;}

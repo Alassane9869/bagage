@@ -1,6 +1,19 @@
 @extends('layouts.app')
 @section('title','Embarquement des Bagages')
 
+@section('styles')
+<style>
+.embarq-search-form { display: flex; gap: 10px; flex-wrap: wrap; }
+.embarq-search-form .search-input { max-width: 320px; flex: 1; }
+@media(max-width: 640px) {
+  .embarq-search-form { flex-direction: column; }
+  .embarq-search-form .search-input { max-width: 100% !important; width: 100%; }
+  .embarq-search-form button, .embarq-search-form a { width: 100%; justify-content: center; }
+  .found-card-row { flex-direction: column; align-items: stretch !important; gap: 12px !important; }
+}
+</style>
+@endsection
+
 @section('content')
 <div class="page-header">
   <h1><i class="bi bi-truck-front"></i> Embarquement des Colis</h1>
@@ -10,8 +23,8 @@
 {{-- Recherche par code --}}
 <div class="card-dt" style="margin-bottom:16px;">
   <div class="card-title"><i class="bi bi-search"></i> Rechercher un colis par numéro</div>
-  <form method="GET" action="{{ route('embarquement.index') }}" style="display:flex;gap:10px;flex-wrap:wrap;">
-    <input type="text" name="search" class="form-control" style="max-width:320px;"
+  <form method="GET" action="{{ route('embarquement.index') }}" class="embarq-search-form">
+    <input type="text" name="search" class="form-control search-input"
            placeholder="N° Colis ou N° Billet…" value="{{ $search ?? '' }}">
     <button type="submit" class="btn-gold" style="padding:8px 18px;">Rechercher</button>
     @if($search)
@@ -21,13 +34,13 @@
 
   @if($search)
     @if($found)
-      <div style="margin-top:14px;background:var(--dark3);border-radius:8px;padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div class="found-card-row" style="margin-top:14px;background:var(--dark3);border-radius:8px;padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
         <div>
           <div class="mono">{{ $found->code_bagage }}</div>
           <div style="color:var(--text);font-weight:500;margin-top:4px;">{{ $found->client?->nom_complet ?? '—' }}</div>
           <div style="font-size:.78rem;color:var(--text2)">{{ $found->voyage?->trajet ?? '—' }} | {{ $found->nature }} | {{ $found->nombre_colis }} colis</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <span class="badge-dt badge-{{ $found->statut_color }}">{{ $found->statut_label }}</span>
           @if($found->statut === 'enregistre')
             <input type="text" id="busSearch" class="form-control" placeholder="N° Bus" style="width:110px;">
@@ -60,7 +73,7 @@
     </form>
   </div>
 
-  <div style="overflow-x:auto;">
+  <div class="table-responsive-dt">
     <table class="table-dt">
       <thead>
         <tr>

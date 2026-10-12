@@ -13,7 +13,11 @@
   align-items:stretch;min-height:72px;
 }
 @media(max-width:900px){.eg-topbar-stats{grid-template-columns:1fr 1fr;}}
-@media(max-width:560px){.eg-topbar-stats{grid-template-columns:1fr;}}
+@media(max-width:600px){
+  .eg-topbar-stats{grid-template-columns:1fr;}
+  .eg-stat, .eg-stat-nb{border-right:none !important;border-bottom:1px solid rgba(255,255,255,.15);}
+  .eg-topbar-actions .btn-print-white{width:100%;justify-content:center;min-height:42px;}
+}
 .eg-stat{
   padding:14px 22px;border-right:1px solid rgba(255,255,255,.15);
   display:flex;flex-direction:column;justify-content:center;

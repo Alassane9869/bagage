@@ -72,6 +72,12 @@ body{
   border-radius:8px;padding:10px 14px;
   color:#f87171;font-size:.8rem;margin-bottom:16px;
 }
+@media(max-width:480px){
+  body{padding:16px;}
+  .login-card{padding:26px 20px;border-radius:14px;}
+  .login-brand h1{font-size:1.15rem;}
+  .field-group input{font-size:16px !important;}
+}
 </style>
 </head>
 <body>

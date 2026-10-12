@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title','Utilisateurs Système')
 
+@section('styles')
+<style>
+@media(max-width: 600px) {
+  .user-modal-box { padding: 16px !important; max-height: 90vh; overflow-y: auto; }
+  .user-modal-box .user-grid-2 { grid-template-columns: 1fr !important; }
+}
+</style>
+@endsection
+
 @section('content')
 <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
   <div>
@@ -11,7 +20,7 @@
 </div>
 
 <div class="card-dt">
-  <div style="overflow-x:auto;">
+  <div class="table-responsive-dt">
     <table class="table-dt">
       <thead>
         <tr><th>Nom</th><th>Login</th><th>Rôle</th><th>Agence</th><th>Statut</th><th>Actions</th></tr>
@@ -57,7 +66,7 @@
 
 {{-- Modal Nouvel Utilisateur --}}
 <div id="modalNewUser" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:480px;padding:24px;">
+  <div class="user-modal-box" style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:480px;padding:24px;">
     <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
       <h3 style="color:var(--gold);font-size:1rem;">+ Nouvel Utilisateur</h3>
       <button onclick="document.getElementById('modalNewUser').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:1.3rem;cursor:pointer;">✕</button>
@@ -105,7 +114,7 @@
 
 {{-- Modal Modifier --}}
 <div id="modalEditUser" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:480px;padding:24px;">
+  <div class="user-modal-box" style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:480px;padding:24px;">
     <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
       <h3 style="color:var(--gold);font-size:1rem;">✏️ Modifier Utilisateur</h3>
       <button onclick="document.getElementById('modalEditUser').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:1.3rem;cursor:pointer;">✕</button>

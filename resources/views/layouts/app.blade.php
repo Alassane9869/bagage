@@ -172,10 +172,284 @@ a{text-decoration:none;color:inherit;}
   min-height:100vh;transition:margin-left .3s;
 }
 .main-content{padding:24px;}
+
+/* ── Apple Mobile Tab Bar & Drawer Styles ── */
+.apple-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  height: calc(58px + max(env(safe-area-inset-bottom, 0px), 8px));
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+  background: rgba(14, 22, 33, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.25);
+  justify-content: space-around;
+  align-items: center;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+body.day-mode .apple-tab-bar {
+  background: rgba(255, 255, 255, 0.88);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.05);
+}
+.apple-tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  color: var(--text2);
+  text-decoration: none;
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.apple-tab-item:active {
+  transform: scale(0.9);
+}
+.apple-tab-item .tab-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-bottom: 3px;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.apple-tab-item .tab-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.apple-tab-item.active {
+  color: var(--gold);
+}
+.apple-tab-item.active .tab-icon {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 2px 6px rgba(201, 168, 76, 0.4));
+}
+.apple-tab-item.active .tab-label {
+  font-weight: 700;
+}
+.apple-tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--gold);
+  box-shadow: 0 1px 4px rgba(201, 168, 76, 0.5);
+}
+
+/* Bouton surélevé central Apple (Nouveau Colis) */
+.apple-tab-item.apple-tab-primary {
+  position: relative;
+  top: -12px;
+}
+.apple-tab-item.apple-tab-primary .primary-btn-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  color: #0e1621;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.45), 0 0 0 3px var(--dark2);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+body.day-mode .apple-tab-item.apple-tab-primary .primary-btn-circle {
+  box-shadow: 0 4px 16px rgba(184, 146, 42, 0.35), 0 0 0 3px #ffffff;
+}
+.apple-tab-item.apple-tab-primary:active .primary-btn-circle {
+  transform: scale(0.9);
+}
+.apple-tab-item.apple-tab-primary .tab-label {
+  margin-top: 3px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.apple-tab-item.apple-tab-primary::after {
+  display: none !important;
+}
+
+/* ── Mobile Sidebar Drawer & Backdrop ── */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+}
+.sidebar-mobile-header {
+  display: none;
+}
+
+/* ── Tableaux & Conteneurs fluides ── */
+.table-responsive-dt {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+}
+.table-responsive-dt::-webkit-scrollbar {
+  height: 5px;
+}
+.table-responsive-dt::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
 @media(max-width:768px){
-  .sidebar{transform:translateX(-100%);}
-  .sidebar.mobile-open{transform:translateX(0);}
-  .main-wrapper{margin-left:0;}
+  :root {
+    --topbar-h: 54px;
+  }
+  .apple-tab-bar {
+    display: flex;
+  }
+  .topbar {
+    height: 54px;
+  }
+  .topbar-brand {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  .topbar-logo {
+    width: 32px;
+    height: 32px;
+  }
+  .topbar-brand-text .t1 {
+    font-size: .85rem;
+    letter-spacing: 0;
+  }
+  .topbar-brand-text .t2 {
+    display: none;
+  }
+  .user-name {
+    display: none;
+  }
+  .user-chip {
+    padding: 3px 6px;
+  }
+  .topbar-btn[title="Recherche"] {
+    display: none;
+  }
+  .sidebar {
+    top: 0;
+    bottom: 0;
+    width: min(85vw, 300px);
+    z-index: 260;
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: none;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
+  }
+  .sidebar-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--dark3);
+  }
+  .smh-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .smh-t1 {
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .smh-t2 {
+    font-size: .7rem;
+    color: var(--text2);
+  }
+  .smh-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--text2);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .smh-close:hover {
+    color: var(--gold);
+    background: var(--dark2);
+  }
+  .main-wrapper {
+    margin-left: 0 !important;
+    padding-top: 54px;
+    padding-bottom: calc(75px + max(env(safe-area-inset-bottom, 0px), 8px)) !important;
+  }
+  .main-content {
+    padding: 14px 12px !important;
+  }
+  /* Empêche le zoom auto désagréable sur iPhone Safari */
+  .form-control, .form-select, input[type="text"], input[type="number"], input[type="date"], select {
+    font-size: 16px !important;
+  }
+  /* Taille optimale tactile pour les boutons */
+  .btn-gold, .btn-outline-gold, .btn-reset {
+    min-height: 42px;
+    font-size: .88rem;
+  }
+  .card-dt, .fc {
+    padding: 16px 14px !important;
+    border-radius: 12px;
+  }
+  .page-header {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+  }
+  .page-header h1 {
+    font-size: 1.15rem;
+  }
+  .toast-container {
+    bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+    right: 12px;
+    left: 12px;
+  }
+  .toast-dt {
+    min-width: unset;
+    max-width: 100%;
+  }
 }
 /* ── Page header ─────────────────────── */
 .page-header{
@@ -330,6 +604,9 @@ a{text-decoration:none;color:inherit;}
   </div>
 </header>
 
+{{-- Backdrop flou pour fermeture au toucher hors du drawer mobile --}}
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebarMobile()"></div>
+
 {{-- ══ SIDEBAR ═════════════════════════════════════════════════ --}}
 @php
   $user      = auth()->user();
@@ -340,6 +617,18 @@ a{text-decoration:none;color:inherit;}
   $canBagage = $isAdmin || $isAgent;
 @endphp
 <nav class="sidebar" id="sidebar">
+
+  {{-- Header mobile du drawer --}}
+  <div class="sidebar-mobile-header">
+    <div class="smh-brand">
+      @include('partials.logo-svg', ['size'=>28, 'class'=>'smh-logo'])
+      <div>
+        <div class="smh-t1">DIARRA TRANSPORT</div>
+        <div class="smh-t2">{{ auth()->user()->role?->nom ?? 'Agent' }}</div>
+      </div>
+    </div>
+    <button type="button" class="smh-close" onclick="closeSidebarMobile()" aria-label="Fermer"><i class="bi bi-x-lg"></i></button>
+  </div>
 
   {{-- ── Tableau de Bord (admin uniquement, tout en haut) ─── --}}
   @if($isAdmin)
@@ -434,6 +723,74 @@ a{text-decoration:none;color:inherit;}
 {{-- ══ TOAST CONTAINER ════════════════════════════════════════ --}}
 <div class="toast-container" id="toastContainer"></div>
 
+{{-- ══ APPLE MOBILE TAB BAR ════════════════════════════════════ --}}
+<nav class="apple-tab-bar" id="appleTabBar" aria-label="Navigation Mobile">
+  @if($isAdmin)
+    <a href="{{ route('admin.dashboard') }}" class="apple-tab-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-speedometer2"></i></div>
+      <span class="tab-label">Dashboard</span>
+    </a>
+    <a href="{{ route('bagages.index') }}" class="apple-tab-item {{ request()->routeIs('bagages.index') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-box-seam"></i></div>
+      <span class="tab-label">Colis</span>
+    </a>
+    <a href="{{ route('bagages.create') }}" class="apple-tab-item apple-tab-primary {{ request()->routeIs('bagages.create') ? 'active' : '' }}" aria-label="Nouveau Colis">
+      <div class="primary-btn-circle" title="Enregistrer un nouveau colis">
+        <i class="bi bi-plus-lg"></i>
+      </div>
+      <span class="tab-label">Nouveau</span>
+    </a>
+    <a href="{{ route('caisse.global') }}" class="apple-tab-item {{ request()->routeIs('caisse.*') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-cash-stack"></i></div>
+      <span class="tab-label">Caisse</span>
+    </a>
+    <button type="button" class="apple-tab-item apple-tab-btn" onclick="toggleSidebarMobile()" aria-label="Menu">
+      <div class="tab-icon"><i class="bi bi-grid-fill"></i></div>
+      <span class="tab-label">Menu</span>
+    </button>
+  @elseif($isAgent)
+    <a href="{{ route('bagages.index') }}" class="apple-tab-item {{ request()->routeIs('bagages.index') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-clipboard-data"></i></div>
+      <span class="tab-label">Colis</span>
+    </a>
+    <a href="{{ route('embarquement.index') }}" class="apple-tab-item {{ request()->routeIs('embarquement.*') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-truck-front"></i></div>
+      <span class="tab-label">Embarq.</span>
+    </a>
+    <a href="{{ route('bagages.create') }}" class="apple-tab-item apple-tab-primary {{ request()->routeIs('bagages.create') ? 'active' : '' }}" aria-label="Nouveau Colis">
+      <div class="primary-btn-circle" title="Enregistrer un nouveau colis">
+        <i class="bi bi-plus-lg"></i>
+      </div>
+      <span class="tab-label">Nouveau</span>
+    </a>
+    <a href="{{ route('caisse.ma_caisse') }}" class="apple-tab-item {{ request()->routeIs('caisse.*') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-wallet2"></i></div>
+      <span class="tab-label">Ma Caisse</span>
+    </a>
+    <button type="button" class="apple-tab-item apple-tab-btn" onclick="toggleSidebarMobile()" aria-label="Menu">
+      <div class="tab-icon"><i class="bi bi-grid-fill"></i></div>
+      <span class="tab-label">Menu</span>
+    </button>
+  @else
+    <a href="{{ route('bagages.index') }}" class="apple-tab-item {{ request()->routeIs('bagages.index') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-box-seam"></i></div>
+      <span class="tab-label">Colis</span>
+    </a>
+    <a href="{{ route('embarquement.index') }}" class="apple-tab-item {{ request()->routeIs('embarquement.*') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-truck-front"></i></div>
+      <span class="tab-label">Embarq.</span>
+    </a>
+    <a href="{{ route('profil.index') }}" class="apple-tab-item {{ request()->routeIs('profil.*') ? 'active' : '' }}">
+      <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+      <span class="tab-label">Profil</span>
+    </a>
+    <button type="button" class="apple-tab-item apple-tab-btn" onclick="toggleSidebarMobile()" aria-label="Menu">
+      <div class="tab-icon"><i class="bi bi-grid-fill"></i></div>
+      <span class="tab-label">Menu</span>
+    </button>
+  @endif
+</nav>
+
 @if(session('success'))
 <script>document.addEventListener('DOMContentLoaded',()=>showToast('success','{{ session('success') }}'));</script>
 @endif
@@ -443,21 +800,46 @@ a{text-decoration:none;color:inherit;}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ── Sidebar toggle ────────────────────
+// ── Sidebar toggle & Mobile Drawer ────────────────────
 const sidebar     = document.getElementById('sidebar');
 const mainWrapper = document.getElementById('mainWrapper');
 const toggle      = document.getElementById('sidebarToggle');
 let sidebarOpen   = true;
 
-toggle.addEventListener('click', () => {
-  if (window.innerWidth <= 768) {
-    sidebar.classList.toggle('mobile-open');
+function openSidebarMobile() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if (sb) sb.classList.add('mobile-open');
+  if (bd) bd.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebarMobile() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if (sb) sb.classList.remove('mobile-open');
+  if (bd) bd.classList.remove('active');
+  document.body.style.overflow = '';
+}
+function toggleSidebarMobile() {
+  const sb = document.getElementById('sidebar');
+  if (sb && sb.classList.contains('mobile-open')) {
+    closeSidebarMobile();
   } else {
-    sidebarOpen = !sidebarOpen;
-    sidebar.style.transform     = sidebarOpen ? '' : 'translateX(-100%)';
-    mainWrapper.style.marginLeft = sidebarOpen ? 'var(--sidebar-w)' : '0';
+    openSidebarMobile();
   }
-});
+}
+
+if (toggle) {
+  toggle.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      toggleSidebarMobile();
+    } else {
+      sidebarOpen = !sidebarOpen;
+      sidebar.style.transform     = sidebarOpen ? '' : 'translateX(-100%)';
+      mainWrapper.style.marginLeft = sidebarOpen ? 'var(--sidebar-w)' : '0';
+    }
+  });
+}
 
 // ── Sous-menus sidebar ────────────────
 function toggleMenu(id, el) {

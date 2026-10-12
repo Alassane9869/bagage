@@ -17,6 +17,10 @@
   color:var(--gold);background:var(--dark2);
   border-color:var(--border);border-bottom-color:var(--dark2);font-weight:600;
 }
+@media(max-width:640px){
+  .param-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;gap:4px;}
+  .param-tab{flex-shrink:0;padding:8px 12px;font-size:.78rem;}
+}
 .param-section{display:none;}
 .param-section.active{display:block;}
 /* ── Cards param ────────────────────── */
