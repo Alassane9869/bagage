@@ -45,31 +45,57 @@
 @media(max-width:560px){.db-stats{grid-template-columns:1fr;}}
 .db-stat-card{
   background:var(--dark2);border:1px solid var(--border);border-radius:12px;
-  padding:18px 20px;position:relative;
+  padding:20px 22px;position:relative;
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  transition:transform 0.2s ease,border-color 0.2s ease;
+}
+.db-stat-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(201,168,76,0.35);
 }
 .db-stat-card .refresh-icon{
-  position:absolute;top:10px;right:12px;
-  font-size:.85rem;color:var(--text2);cursor:pointer;
+  position:absolute;top:12px;right:14px;
+  font-size:.9rem;color:var(--text2);cursor:pointer;
+  transition:color 0.15s ease,transform 0.2s ease;
 }
-.db-stat-card .s-label{font-size:.75rem;color:var(--text2);margin-bottom:6px;}
+.db-stat-card .refresh-icon:hover{
+  color:var(--gold);
+  transform:rotate(90deg);
+}
+.db-stat-card .s-label{
+  font-size:.72rem;color:var(--text2);margin-bottom:8px;
+  font-weight:600;text-transform:uppercase;letter-spacing:.05em;
+}
 .db-stat-card .s-value{
-  font-size:1.7rem;font-weight:700;color:var(--gold);
+  font-size:1.85rem;font-weight:700;color:#38bdf8;
   font-family:'Space Mono',monospace;line-height:1.1;
 }
 .db-stat-card .s-value.green{color:#4ade80;}
-.db-stat-card .s-value.orange{color:#f59e0b;}
+.db-stat-card .s-value.orange{color:#fbbf24;}
+.db-stat-card .s-value.gold{color:var(--gold2);}
 
 /* ── Graphiques ─── */
 .db-charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
 @media(max-width:860px){.db-charts{grid-template-columns:1fr;}}
 .db-chart-card{
-  background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+  background:var(--dark2);border:1px solid var(--border);border-radius:12px;
+  padding:20px 22px;box-shadow:0 4px 20px rgba(0,0,0,0.15);
 }
 .db-chart-title{
-  font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:14px;
+  font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:16px;
   display:flex;justify-content:space-between;align-items:center;
 }
-.db-chart-title .refresh-icon{font-size:.85rem;color:var(--text2);cursor:pointer;}
+.db-chart-title .refresh-icon{
+  font-size:.9rem;color:var(--text2);cursor:pointer;
+  transition:color 0.15s ease,transform 0.2s ease;
+}
+.db-chart-title .refresh-icon:hover{
+  color:var(--gold);
+  transform:rotate(90deg);
+}
+.chart-container-box{
+  position:relative;height:240px;width:100%;
+}
 
 /* ── Gestion des droits ─── */
 .droits-card{display:none;}
@@ -120,28 +146,28 @@
 <div class="db-stats">
 
   <div class="db-stat-card">
-    <span class="refresh-icon">↻</span>
+    <span class="refresh-icon" onclick="location.reload()" title="Actualiser">↻</span>
     <div class="s-label">Total Bagages Enregistrés</div>
     <div class="s-value">{{ number_format($totalEnregistres, 0, ',', ' ') }}</div>
   </div>
 
   <div class="db-stat-card">
-    <span class="refresh-icon">↻</span>
+    <span class="refresh-icon" onclick="location.reload()" title="Actualiser">↻</span>
     <div class="s-label">Total Bagages Embarqués</div>
     <div class="s-value green">{{ number_format($totalEmbarques, 0, ',', ' ') }}</div>
   </div>
 
   <div class="db-stat-card">
-    <span class="refresh-icon">↻</span>
+    <span class="refresh-icon" onclick="location.reload()" title="Actualiser">↻</span>
     <div class="s-label">Taux d'Embarquement</div>
     <div class="s-value orange">{{ $tauxEmbarquement }} %</div>
   </div>
 
   <div class="db-stat-card">
-    <span class="refresh-icon">↻</span>
+    <span class="refresh-icon" onclick="location.reload()" title="Actualiser">↻</span>
     <div class="s-label">Chiffre d'Affaires Total</div>
-    <div class="s-value" style="font-size:1.2rem;">
-      {{ number_format($chiffreAffaires, 0, ',', ' ') }} CFA
+    <div class="s-value gold" style="font-size:1.35rem;">
+      {{ number_format($chiffreAffaires, 0, ',', ' ') }} <span style="font-size:.8rem;font-weight:600;">CFA</span>
     </div>
   </div>
 
@@ -154,18 +180,22 @@
   <div class="db-chart-card">
     <div class="db-chart-title">
       Évolution des Enregistrements et Embarquements
-      <span class="refresh-icon">↻</span>
+      <span class="refresh-icon" onclick="initCharts()" title="Recharger graphique">↻</span>
     </div>
-    <canvas id="chartEvolution" height="180"></canvas>
+    <div class="chart-container-box">
+      <canvas id="chartEvolution"></canvas>
+    </div>
   </div>
 
   {{-- Répartition par destination --}}
   <div class="db-chart-card">
     <div class="db-chart-title">
       Répartition des Recettes par Destination
-      <span class="refresh-icon">↻</span>
+      <span class="refresh-icon" onclick="initCharts()" title="Recharger graphique">↻</span>
     </div>
-    <canvas id="chartDestinations" height="180"></canvas>
+    <div class="chart-container-box">
+      <canvas id="chartDestinations"></canvas>
+    </div>
   </div>
 
 </div>
@@ -181,7 +211,6 @@
   $embarqs  = $evolutionRaw->pluck('embarques')->toArray();
   $destLabels   = $parDestination->pluck('ville_arrivee')->toArray();
   $destRecettes = $parDestination->map(fn($d) => (int)$d->recettes)->toArray();
-  $colors = ['#FF6B9D','#1a6bbf','#FCD116','#169B62','#CE1126','#e07b00','#9b59b6','#1abc9c','#e67e22','#95a5a6'];
 @endphp
 
 const labelsEvol         = @json($labels);
@@ -189,69 +218,188 @@ const dataTotal          = @json($totaux);
 const dataEmbarq         = @json($embarqs);
 const labelsDestinations = @json($destLabels);
 const dataRecettes       = @json($destRecettes);
-const colors             = @json($colors);
 
-new Chart(document.getElementById('chartEvolution'), {
-  type: 'bar',
-  data: {
-    labels: labelsEvol,
-    datasets: [
-      {
-        label: 'Bagages Enregistrés',
-        data: dataTotal,
-        backgroundColor: 'rgba(252,209,22,0.6)',
-        borderColor: '#FCD116',
-        borderWidth: 1,
+// Palette moderne vibrante optimisée dark/light
+const paletteDest = [
+  '#ec4899', // Rose vif
+  '#3b82f6', // Bleu
+  '#f59e0b', // Ambre doré
+  '#10b981', // Émeraude
+  '#ef4444', // Rouge
+  '#8b5cf6', // Violet
+  '#06b6d4', // Cyan
+  '#14b8a6', // Teal
+  '#f97316'  // Orange
+];
+
+function getThemeConfig() {
+  const isDay = document.body.classList.contains('day-mode');
+  return {
+    isDay: isDay,
+    textColor: isDay ? '#5a6a7e' : '#7a90a8',
+    titleColor: isDay ? '#1a2332' : '#eef2f7',
+    gridColor: isDay ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)',
+    tooltipBg: isDay ? 'rgba(255,255,255,0.95)' : 'rgba(14,22,33,0.95)',
+    tooltipText: isDay ? '#1a2332' : '#eef2f7',
+    tooltipBorder: isDay ? 'rgba(0,0,0,0.1)' : 'rgba(201,168,76,0.3)',
+  };
+}
+
+let chartEvolInstance = null;
+let chartDestInstance = null;
+
+function initCharts() {
+  const cfg = getThemeConfig();
+
+  // 1. Évolution des Enregistrements et Embarquements
+  const ctxEvol = document.getElementById('chartEvolution');
+  if (ctxEvol) {
+    if (chartEvolInstance) chartEvolInstance.destroy();
+    chartEvolInstance = new Chart(ctxEvol, {
+      type: 'bar',
+      data: {
+        labels: labelsEvol,
+        datasets: [
+          {
+            label: 'Bagages Enregistrés',
+            data: dataTotal,
+            backgroundColor: 'rgba(201, 168, 76, 0.55)',
+            borderColor: '#c9a84c',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            order: 2,
+          },
+          {
+            label: 'Bagages Embarqués',
+            data: dataEmbarq,
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34, 197, 94, 0.15)',
+            borderWidth: 2.5,
+            type: 'line',
+            fill: false,
+            tension: 0.35,
+            pointBackgroundColor: '#22c55e',
+            pointBorderColor: cfg.isDay ? '#ffffff' : '#0e1621',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            order: 1,
+          }
+        ]
       },
-      {
-        label: 'Bagages Embarqués',
-        data: dataEmbarq,
-        backgroundColor: 'rgba(255,107,157,0.7)',
-        borderColor: '#FF6B9D',
-        borderWidth: 1,
-        type: 'line',
-        fill: false,
-        tension: 0.3,
-        pointRadius: 4,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              color: cfg.titleColor,
+              font: { family: 'Outfit, sans-serif', size: 12, weight: '500' },
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16
+            }
+          },
+          tooltip: {
+            backgroundColor: cfg.tooltipBg,
+            titleColor: '#c9a84c',
+            bodyColor: cfg.tooltipText,
+            borderColor: cfg.tooltipBorder,
+            borderWidth: 1,
+            padding: 12,
+            cornerRadius: 8,
+            titleFont: { weight: '700' }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: cfg.textColor,
+              font: { family: 'Space Mono, monospace', size: 10 },
+              stepSize: 2
+            },
+            grid: { color: cfg.gridColor }
+          },
+          x: {
+            ticks: {
+              color: cfg.textColor,
+              font: { family: 'Outfit, sans-serif', size: 11 }
+            },
+            grid: { display: false }
+          }
+        }
       }
-    ]
-  },
-  options: {
-    responsive: true,
-    interaction: { mode: 'index' },
-    plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
-    scales: {
-      y: { beginAtZero: true, ticks: { font: { size: 11 } } },
-      x: { ticks: { font: { size: 11 } } }
-    }
+    });
   }
-});
 
-new Chart(document.getElementById('chartDestinations'), {
-  type: 'bar',
-  data: {
-    labels: labelsDestinations,
-    datasets: [{
-      label: 'Recettes (CFA)',
-      data: dataRecettes,
-      backgroundColor: colors.slice(0, labelsDestinations.length),
-      borderRadius: 4,
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ctx.parsed.y.toLocaleString('fr-FR') + ' CFA' } }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { font: { size: 10 }, callback: v => (v / 1000000).toFixed(1) + 'M' }
+  // 2. Répartition par destination
+  const ctxDest = document.getElementById('chartDestinations');
+  if (ctxDest) {
+    if (chartDestInstance) chartDestInstance.destroy();
+    chartDestInstance = new Chart(ctxDest, {
+      type: 'bar',
+      data: {
+        labels: labelsDestinations,
+        datasets: [{
+          label: 'Recettes',
+          data: dataRecettes,
+          backgroundColor: paletteDest.slice(0, labelsDestinations.length),
+          borderRadius: 6,
+          borderWidth: 0,
+        }]
       },
-      x: { ticks: { font: { size: 10 } } }
-    }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: cfg.tooltipBg,
+            titleColor: '#c9a84c',
+            bodyColor: cfg.tooltipText,
+            borderColor: cfg.tooltipBorder,
+            borderWidth: 1,
+            padding: 12,
+            cornerRadius: 8,
+            callbacks: {
+              label: ctx => ' Recettes: ' + parseInt(ctx.parsed.y || 0).toLocaleString('fr-FR') + ' FCFA'
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: cfg.textColor,
+              font: { family: 'Space Mono, monospace', size: 10 },
+              callback: function(v) {
+                if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+                if (v >= 1000) return (v / 1000).toLocaleString('fr-FR') + 'k';
+                return v;
+              }
+            },
+            grid: { color: cfg.gridColor }
+          },
+          x: {
+            ticks: {
+              color: cfg.textColor,
+              font: { family: 'Outfit, sans-serif', size: 11 }
+            },
+            grid: { display: false }
+          }
+        }
+      }
+    });
   }
-});
+}
+
+// Initialisation au chargement
+document.addEventListener('DOMContentLoaded', initCharts);
+
+// Ré-initialisation dynamique si bascule de thème
+window.addEventListener('diarra-theme-changed', initCharts);
 </script>
 @endsection

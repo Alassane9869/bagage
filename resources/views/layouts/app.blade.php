@@ -82,39 +82,40 @@ a{text-decoration:none;color:inherit;}
 /* ── Dropdown user ───────────────────── */
 .user-dropdown{
   position:absolute;top:52px;right:12px;
-  background:#ffffff;border:1px solid #e0e0e0;
-  border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.18);
+  background:var(--dark2);border:1px solid var(--border);
+  border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.35);
   min-width:210px;z-index:500;display:none;overflow:hidden;
 }
 .user-dropdown.open{display:block;}
 .ud-header{
-  padding:14px 16px;background:#fafafa;
-  border-bottom:1px solid #f0f0f0;
+  padding:14px 16px;background:var(--dark3);
+  border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:10px;
 }
 .ud-avatar{
   width:36px;height:36px;border-radius:50%;
-  background:#1a6bbf;color:white;
+  background:var(--gold);color:#0e1621;
   display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:.9rem;flex-shrink:0;
 }
-.ud-name{font-size:13px;font-weight:700;color:#1a2332;line-height:1.2;}
-.ud-role{font-size:11px;color:#7a90a8;margin-top:1px;}
+.ud-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.2;}
+.ud-role{font-size:11px;color:var(--text2);margin-top:1px;}
 .ud-item{
   display:flex;align-items:center;gap:12px;
   padding:13px 16px;cursor:pointer;
-  color:#2c3e50;font-size:13px;
-  border-bottom:1px solid #f5f5f5;transition:background .15s;
+  color:var(--text);font-size:13px;
+  border-bottom:1px solid var(--border);transition:background .15s;
 }
 .ud-item:last-child{border-bottom:none;}
-.ud-item:hover{background:#f5f7fa;}
+.ud-item:hover{background:var(--dark3);color:var(--gold);}
 .ud-icon{
-  width:28px;height:28px;border-radius:50%;background:#f0f4f8;
+  width:28px;height:28px;border-radius:50%;background:var(--dark3);
   display:flex;align-items:center;justify-content:center;
-  font-size:.9rem;flex-shrink:0;
+  font-size:.9rem;flex-shrink:0;color:var(--gold);
 }
-.ud-item.logout{color:#c0392b;}
-.ud-item.logout .ud-icon{background:#fdf0ef;}
+.ud-item.logout{color:#f87171;}
+.ud-item.logout:hover{background:rgba(192,57,43,.15);}
+.ud-item.logout .ud-icon{background:rgba(192,57,43,.2);color:#f87171;}
 /* ── Bouton thème ────────────────────── */
 .icon-btn{
   width:34px;height:34px;border:none;background:none;border-radius:8px;
@@ -906,6 +907,7 @@ function toggleTheme() {
   const isDay = document.body.classList.toggle('day-mode');
   localStorage.setItem('diarra-theme', isDay ? 'day' : 'night');
   document.getElementById('themeIcon').innerHTML = isDay ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
+  window.dispatchEvent(new CustomEvent('diarra-theme-changed', { detail: { isDay } }));
 }
 // Restaurer thème au chargement
 (function() {
