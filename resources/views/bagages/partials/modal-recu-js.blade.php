@@ -74,6 +74,38 @@ function logoSvg(size) {
   </svg>`;
 }
 
+// ── Helpers format de date fiables (évite les bugs 'Invalid Date') ──
+function formatFrenchDate(dateVal) {
+  if (!dateVal) return '—';
+  try {
+    const raw = String(dateVal).split('T')[0].split(' ')[0];
+    const p = raw.split('-');
+    if (p.length === 3) {
+      return p[2] + '/' + p[1] + '/' + p[0];
+    }
+    return raw;
+  } catch(e) {
+    return String(dateVal);
+  }
+}
+
+function formatFrenchDateLong(dateVal) {
+  if (!dateVal) return '—';
+  try {
+    const raw = String(dateVal).split('T')[0].split(' ')[0];
+    const p = raw.split('-');
+    if (p.length === 3) {
+      const ms = ['janvier','février','mars','avril','mai','juin','juillet',
+                  'août','septembre','octobre','novembre','décembre'];
+      const mIdx = parseInt(p[1], 10) - 1;
+      return parseInt(p[2], 10) + ' ' + (ms[mIdx] || p[1]) + ' ' + p[0];
+    }
+    return raw;
+  } catch(e) {
+    return String(dateVal);
+  }
+}
+
 // ── Construit le reçu client ─────────────────────────────────
 function buildRecu(b, qrSvg) {
   const cl   = b.client  || {};
@@ -84,14 +116,7 @@ function buildRecu(b, qrSvg) {
   const dep  = (voy.ville_depart  || '—').toUpperCase();
   const arr  = (voy.ville_arrivee || '—').toUpperCase();
   const trajet = dep + ' → ' + arr;
-
-  let dateStr = '—';
-  if (voy.date_depart) {
-    try {
-      const d = new Date(voy.date_depart + 'T00:00:00');
-      dateStr = d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
-    } catch(e) { dateStr = voy.date_depart; }
-  }
+  const dateStr = formatFrenchDate(voy.date_depart || b.date_depart);
 
   const agentNom = ((usr.prenom||'') + ' ' + (usr.nom||'')).trim() || '—';
   const montantF = parseInt(b.montant || 0).toLocaleString('fr-FR');
@@ -100,11 +125,15 @@ function buildRecu(b, qrSvg) {
 
   const colisArr = b.colis || [];
   let colisRows = '';
-  colisArr.forEach((c, i) => {
-    const val = c.valeur ? c.valeur : '—';
-    const px  = parseInt(c.prix || 0).toLocaleString('fr-FR') + ' F';
-    colisRows += `<tr><td>Colis ${i+1}</td><td>${c.nature || '—'} | Valeur: ${val} | Prix: ${px}</td></tr>`;
-  });
+  if (colisArr.length > 0) {
+    colisArr.forEach((c, i) => {
+      const val = c.valeur ? ` (Val: ${c.valeur})` : '';
+      const px  = parseInt(c.prix || 0).toLocaleString('fr-FR') + ' F';
+      colisRows += `<tr><td>Colis ${i+1}</td><td><strong>${c.nature || '—'}</strong>${val} &mdash; <span style="color:#169B62;font-weight:600;">${px}</span></td></tr>`;
+    });
+  } else {
+    colisRows = `<tr><td>Nature</td><td><strong>${b.nature || '—'}</strong></td></tr>`;
+  }
 
   document.getElementById('recuHtml').innerHTML = `
     <div class="recu-header">
@@ -118,9 +147,11 @@ function buildRecu(b, qrSvg) {
 
     <div class="recu-code">N° ${b.code_bagage}</div>
     <div class="recu-trajet">${trajet} &nbsp;|&nbsp; ${dateStr}</div>
+
+    <table class="recu-table">
       <tr><td>Voyageur</td>     <td><strong style="font-size:14px;">${nom}</strong></td></tr>
       <tr><td>Téléphone</td>    <td><strong style="font-size:13px;">${cl.telephone || '—'}</strong></td></tr>
-      <tr><td>Nb Colis</td>     <td>${b.nombre_colis || 1}</td></tr>
+      <tr><td>Nb Colis</td>     <td><strong>${b.nombre_colis || 1}</strong></td></tr>
       ${colisRows}
       <tr><td>N° Billet</td>    <td>${b.numero_billet ? 'Billet N\u00B0 ' + b.numero_billet : '—'}</td></tr>
       <tr><td>Programme</td>    <td>${voy.programme || '—'}</td></tr>
@@ -322,16 +353,7 @@ function buildThermalRecu(b, qrSvg) {
   const now      = new Date();
   const dateHeure = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 
-  let dateDepStr = '—';
-  if (voy.date_depart) {
-    try {
-      const dd = new Date(voy.date_depart + 'T00:00:00');
-      const j  = dd.getDate();
-      const ms = ['janvier','février','mars','avril','mai','juin','juillet',
-                  'août','septembre','octobre','novembre','décembre'];
-      dateDepStr = j + ' ' + ms[dd.getMonth()] + ' ' + dd.getFullYear();
-    } catch(e) { dateDepStr = voy.date_depart; }
-  }
+  const dateDepStr = formatFrenchDateLong(voy.date_depart || b.date_depart);
 
   const billetDisplay = b.numero_billet
     ? 'Billet N\u00B0 ' + b.numero_billet
@@ -340,6 +362,18 @@ function buildThermalRecu(b, qrSvg) {
   const montantFmt = montant.toLocaleString('fr-FR') + 'F';
   const remiseFmt  = remise.toLocaleString('fr-FR')  + 'F';
   const netFmt     = net.toLocaleString('fr-FR')     + 'F';
+
+  let colisThermalRows = '';
+  const colisList = b.colis || [];
+  if (colisList.length > 0) {
+    colisList.forEach((c, i) => {
+      const px = parseInt(c.prix || 0).toLocaleString('fr-FR') + 'F';
+      const val = c.valeur ? ` (Val: ${c.valeur})` : '';
+      colisThermalRows += `<div class="tt-row"><span class="lbl">COLIS ${i+1}:</span><span class="val">${c.nature || '—'}${val} - ${px}</span></div>`;
+    });
+  } else {
+    colisThermalRows = `<div class="tt-row"><span class="lbl">NATURE:</span><span class="val">${b.nature||'—'}</span></div>`;
+  }
 
   return `
   <div class="thermal-wrap">
@@ -367,9 +401,8 @@ function buildThermalRecu(b, qrSvg) {
     <div class="tt-row tt-big"><span class="lbl">DESTINATION:</span> <span class="val">${arr}</span></div>
     <div class="tt-row tt-big"><span class="lbl">CLIENT:</span>      <span class="val">${nom}</span></div>
     <div class="tt-row tt-big"><span class="lbl">TEL:</span>         <span class="val">${cl.telephone || '—'}</span></div>
-    <div class="tt-row"><span class="lbl">NATURE:</span>      <span class="val">${b.nature||'—'}</span></div>
     <div class="tt-row"><span class="lbl">NB COLIS:</span>    <span class="val">${b.nombre_colis||1}</span></div>
-    ${b.poids ? `<div class="tt-row"><span class="lbl">POIDS:</span><span class="val">${b.poids} kg</span></div>` : ''}
+    ${colisThermalRows}
     <div class="tt-row">
       <span class="lbl">TARIF:</span><span class="val">${montantFmt}</span>
       <span class="lbl" style="margin-left:8px">REMISE:</span><span class="val">${remiseFmt}</span>
