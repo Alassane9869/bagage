@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Ne pas rediriger si on pointe déjà vers /public
+    RewriteCond %{REQUEST_URI} !^/public/
+    # Rediriger toutes les requêtes vers le dossier public
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>
+
+# Protection des fichiers sensibles
+<FilesMatch "^\.(env|git|yml|yaml|json|lock|sqlite)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
